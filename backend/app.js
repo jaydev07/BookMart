@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const port = process.env.PORT || 5000;
 const HttpError = require("./helpers/http-error");
+const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 
 // Morgan is used to see the routes in console
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 // It is used to store the user credientials in cookie
 app.use(cookieParser());
 
+app.use("/api/auth",authRoutes);
 app.use("/api/user",userRoutes);
 
 app.use((req,res,next) => {

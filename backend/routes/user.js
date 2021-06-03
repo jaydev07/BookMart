@@ -3,20 +3,16 @@ const {check} = require("express-validator");
 const router = express.Router();
 
 const userControllers = require("../controllers/user");
+const checkAuth = require("../middlewares/auth-check");
 
-router.post("/signup",
-    [
-        check('name').not().isEmpty(),
-        check('email').isEmail(),
-        check('password').isLength({min:6})
-    ] , userControllers.signup);
+// * new :- If any route contain userId then it will find the user by it's Id and send in the request to other routes
+// It is a middleware
+router.param("userId",userControllers.userById);
 
-router.post("/signin",
-    [
-        check('email').isEmail(),
-        check('password').isLength({min:6})
-    ] , userControllers.signin);
+router.use(checkAuth.checkToken);
 
-router.get("/signout", userControllers.signout);
+router.get("/secret/:userId", checkAuth.isAuth, (req,res) => {
+    res.json({user:req.profile});
+})
 
 module.exports = router;
